@@ -1,3 +1,4 @@
+<?php session_start(); ?>
 <!DOCTYPE html>
 <html>
 
@@ -12,9 +13,7 @@
 </head>
 
 <body>
-    <?php include('navbar.php'); ?>
-
-    <section class="hero is-info is-small">
+    <section class="hero is-info ">
         <div class="hero-body">
             <div class="container has-text-centered">
                 <img src="https://zupimages.net/up/21/15/9r1f.png" alt="" />
@@ -23,98 +22,66 @@
                 </p> <br>
 
                 <p class="subtitle">
-                    Reserver une machine pour un utilisateur
-                </p>
+                    Connecte toi en tant q'administrateur </p>
             </div>
             <br><br>
             <div class="columns">
                 <div class="column is-4"></div>
                 <div class="column is-4">
-                    <div class="container has-text-centered">
+                    <div class="column has-text-centered">
                         <form action="" method="post">
-                            <label for="user">User</label>
+                            <label for=""> pseudo de l'administrateur </label>
                             <div class="column">
-                                <div class="select">
-
-                                    <select name="user">
-
-                                        <?php
-                                        require_once('config.php');
-                                        $reponse_utilisateur = $db->query('SELECT * FROM utilisateur');
-                                        while ($utilisateur = $reponse_utilisateur->fetch()) {
-                                        ?>
-                                            <option value="<?= $utilisateur['id'] ?>"><?= $utilisateur['pseudo'] ?></option>
-                                        <?php
-                                        }
-                                        ?>
-                                    </select>
-                                </div>
+                                <input class="input" name="pseudo" type="text">
                             </div>
-                            <label for="machine">Machine</label>
+                            <label for=""> Mot de passe </label>
                             <div class="column">
-                                <div class="select">
-                                    <select name="machine">
-                                        <?php
-                                        require_once('config.php');
-                                        $reponse = $db->query('SELECT * FROM machine');
-                                        while ($machine = $reponse->fetch()) {
-                                        ?>
-                                            <option value="<?= $machine['id'] ?>"><?= $machine['nom_machine'] ?></option>
-                                        <?php
-                                        }
-                                        ?>
-                                    </select>
-                                </div>
+                                <input class="input" name="pass" type="password">
                             </div>
-                            <div class="column has-text-centered">
-                                <label for="pseudo"> Date de reservation </label>
-                                <div class="column">
+                            <div class="column">
+                                <button type="submit" name="submit" class="button is-danger">
+                                    Connexion
+                                </button>
 
-                                    <input class="input" type="date" placeholder="Date de reservation" name="date">
-                                </div>
-                                <label for="pseudo"> Heure de debut de reservation </label>
-                                <div class="column">
-                                    <input class="input" name="heure_debut" type="time">
-                                </div>
-                                <label for="pseudo"> Heure de fin de reservation </label>
-                                <div class="column">
-                                    <input class="input" name="heure_fin" type="time">
-                                </div>
-
-                                <div class="column">
-                                    <button type="submit" name="reserver" class="button is-danger">
-                                        <i class="fas fa-user-plus"></i>Reserver
-                                    </button>
-                                </div>
                             </div>
-
                         </form>
                     </div>
-
-                    <?php
-                    include('config.php');
-                    $reponse_reservation = $db->query('SELECT * FROM reservation');
-                    if (isset($_POST['reserver'])) {
-                        $requete = 'INSERT INTO reservation VALUES(NULL, "' . $_POST['user'] . '",
-                            "' . $_POST['machine'] . '",
-                                "' . $_POST['date'] . '",
-                                "' . $_POST['heure_debut'] . '",
-                                "' . $_POST['heure_fin'] . '")';
-                        $resultat = $db->query($requete);
-
-                        $reponse_disponible = $db->query('SELECT * FROM machine');
-                        $requete = 'UPDATE machine SET statut="Indispoonible" WHERE id="' . $_POST['machine'] . '"';
-                        $resultat = $db->query($requete);
-                        echo '<script>document.location.replace("index.php");</script>';
-                    }
-
-
-
-                    ?>
                 </div>
-                <div class="column is-4"></div>
+                <div class="column is-4">
+                    <?php
+                    require('config.php');
+                    if (isset($_POST['submit']) & !empty($_POST['pseudo']) & !empty($_POST['pass'])) {
+                        //Récuperation de l'utilisateur via son pseudo
+
+                        $reponse = $db->query('SELECT * FROM users WHERE pseudo ="' . $_POST['pseudo'] . '"');
+                        while ($donnees = $reponse->fetch()) {
+                            $pseudo = $donnees['pseudo'];
+                            $pass = $donnees['pass'];
+                        }
+
+                        //Vérification du mot de passe
+                        //Si le mot de passe ne correspond pas afficher un message d'erreur
+                        $pass_identique = password_verify($_POST['pass'], $pass);
+                        if (!$pass_identique) {
+                            echo '<span class="alerte_message">Vos identifiants ne correspondent pas!</span>';
+                        } else {
+
+                            //Si le mot de passe correspond, crée une session et récupérer les données de l'utilisateur 
+                            //puis le rediriger vers la page d'espace membre
+                            if ($pass_identique) {
+                                $_SESSION['id'] = $resultat['id'];
+                                $_SESSION['pseudo'] = $pseudo;
+                                echo "<script>alert(\"Vous êtes connecté !\")</script>";
+                                echo '<script>document.location.replace("accueil.php");</script>';
+                            } else {
+                                echo '<span class="alerte_message">Vos identifiants ne correspondent pas!</span>';
+                            }
+                        }
+                    }
+                    ?>
+
+                </div>
             </div>
-        </div>
     </section>
 </body>
 
