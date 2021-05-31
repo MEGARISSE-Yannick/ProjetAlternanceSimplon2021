@@ -1,3 +1,5 @@
+<?php session_start(); ?>
+
 <!DOCTYPE html>
 <html>
 
@@ -43,17 +45,31 @@
                                     echo '<label>' . $donnees['nom_machine'] . '</label>';
                                     echo '<input class="input is-primary" type="text" name="new_nom_machine"  value="' . $donnees['nom_machine'] . '">';
                                     echo '<input type="hidden" name="id" value="' . $donnees['id'] . '">';
+                                    echo '<label for="statut">Annuler reservation</label>
+                                    <input type="checkbox" name="statut" id="statut" value="1">';
                                     echo '</div>';
                                     echo '<button name="modifier" type="submit" class="button is-danger"><i class="fas fa-rocket"></i>Modifier</button>';
+
+
 
                                     if (isset($_POST['modifier']) && !empty('new_nom_machine')) {
                                         $requete = 'UPDATE machine SET   nom_machine="' . $_POST['new_nom_machine'] . '"  WHERE id="' . $_POST['id'] . '"';
                                         $resultat = $db->query($requete);
                                         echo '<script>document.location.replace("machine.php");</script>';
+
+
+
+                                        if (!empty($_POST['statut'] == 1)) {
+                                            // On inclut la connexion à la base
+                                            $requete = 'UPDATE machine SET   disponible= 0  WHERE id="' . $_POST['id'] . '"';
+                                            $resultat = $db->query($requete);
+                                        }
                                     }
                                 }
                                 ?>
+
                             </form>
+
                         </div>
                     </div>
                     <div class="column is-4"></div>

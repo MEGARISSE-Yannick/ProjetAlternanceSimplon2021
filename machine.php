@@ -1,3 +1,5 @@
+<?php session_start(); ?>
+
 <!DOCTYPE html>
 <html>
 
@@ -39,7 +41,7 @@
                 $reponse = $db->query('SELECT * FROM machine');
 
                 if (isset($_POST['nom_machine'])) {
-                    $requete = 'INSERT INTO machine VALUES(NULL,"disponible","' . $_POST['nom_machine'] . '" )';
+                    $requete = 'INSERT INTO machine VALUES(NULL,"' . $_POST['nom_machine'] . '" , "0" )';
                     $resultat = $db->query($requete);
                 }
                 ?>
@@ -54,20 +56,21 @@
                     <tr>
                         <th>Nom machine</th>
                         <th>Statut</th>
-                        <th>Modification</th>
-                        <th>Suppression</th>
-                        <th>Annulation</th>
+                        <th>Modifier </th>
+                        <th>Supprimer</th>
 
 
                     </tr>
                 </thead>
                 <tbody>
                     <?php
+                    $utilisateur = 'Aucun utilisateur defini';
                     // On inclut la connexion à la base
                     require_once('config.php');
 
                     // On écrit notre requête
-                    $sql_machine = 'SELECT * FROM `machine`';
+                    $sql_machine = 'SELECT * FROM `machine` WHERE disponible = 0';
+
 
                     // On prépare la requête
                     $query_machine = $db->prepare($sql_machine);
@@ -84,16 +87,13 @@
                     ?>
                         <tr>
                             <td><?= $machine['nom_machine'] ?></td>
-
-
-                            <td><?= $machine['statut'] ?></td>
-                            <td><a class="button is-warning" href="modif-machine.php?id=<?= $machine['id'] ?>">
-                                    <i class="fas fa-user-edit"></i></a></td>
-                            <td><a class="button is-danger" href="supprimer-machine.php?id=<?= $machine['id'] ?>">
-                                    <i class="fas fa-user-times"></i></a></td>
-                            <td><a class="button is-success" href="annulation.php?id=<?= $machine['id'] ?>">
-                                    <i class="fas fa-user-minus"></i></a></td>
-
+                            <td>Disponible</td>
+                            <td>
+                                <a class="button is-warning" href="modif-machine.php?id=<?= $machine['id'] ?>"><i class="fas fa-user-edit"></i></a>
+                            </td>
+                            <td>
+                                <a class="button is-danger" href="supprimer-machine.php?id=<?= $machine['id'] ?>"><i class="fas fa-user-times"></i></a>
+                            </td>
                         </tr>
                     <?php
                     }

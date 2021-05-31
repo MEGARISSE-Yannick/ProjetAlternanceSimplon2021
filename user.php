@@ -1,3 +1,5 @@
+<?php session_start();?>
+
 <!DOCTYPE html>
 <html>
 
@@ -27,22 +29,19 @@
                 Creer un utilisateur le modifier ou le supprimer
             </p>
             <form method="post">
-                <label for="pseudo"> User </label>
+                <label for="pseudouser"> User </label>
                 <br><br>
-                <input class="input" type="text" placeholder="Nom de l'utilisateur" name="pseudo">
-                <br><br>
+                <input id="pseudo" class="input" type="text" placeholder="pseudo de l'utilisateur" name="pseudo">
                 <button type="submit" class="button is-black"><i class="fas fa-rocket"></i>Ajouter</button>
-
-                <?php
+            </form>
+            <?php
                 include('config.php');
 
-                $reponse = $db->query('SELECT * FROM utilisateur');
                 if (isset($_POST['pseudo'])) {
                     $requete = 'INSERT INTO utilisateur VALUES(NULL, "' . $_POST['pseudo'] . '" )';
                     $resultat = $db->query($requete);
                 }
                 ?>
-            </form>
         </div>
         <br><br><br><br>
 
